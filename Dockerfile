@@ -64,8 +64,9 @@ RUN apk add --no-cache icu-libs
 COPY --from=publish /app/publish .
 RUN chown -R app:app /app
 
-# The base image defines no healthcheck; NONE states that explicitly, so runtime behavior is unchanged.
-HEALTHCHECK NONE
+# I01-WP3: /ping is mapped by the Genesis chassis for every API (ApplicationConfigurations.ConfigureMiddleware).
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD wget -qO- http://127.0.0.1:5000/ping || exit 1
 
 USER app
 

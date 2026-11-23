@@ -44,8 +44,9 @@ RUN apk add --no-cache icu-libs
 COPY --from=publish /app/publish .
 RUN chown -R app:app /app
 
-# The base image defines no healthcheck; NONE states that explicitly, so runtime behavior is unchanged.
-HEALTHCHECK NONE
+# I01-WP3: a worker exposes no HTTP endpoint; the dotnet process is its liveness signal (as in the other workers).
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD pgrep -x dotnet >/dev/null || exit 1
 
 USER app
 
