@@ -100,23 +100,6 @@ if (File.Exists(indexHtml))
 ApplicationConfigurations.ConfigureMiddleware(app);
 await app.RunAsync();
 
-static VaultType ResolveVaultType()
-{
-    var configuredVaultType = Environment.GetEnvironmentVariable("BLOCKS_VAULT_TYPE");
-    if (!string.IsNullOrWhiteSpace(configuredVaultType) &&
-        Enum.TryParse<VaultType>(configuredVaultType, true, out var parsedVaultType))
-    {
-        return parsedVaultType;
-    }
-
-    var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ??
-                      Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
-
-    return string.Equals(environment, "Development", StringComparison.OrdinalIgnoreCase)
-        ? VaultType.OnPrem
-        : VaultType.Azure;
-}
-
 static void ApplyFrontendRuntimeSettings(IConfiguration configuration, string webRootPath)
 {
     // Read frontend runtime values from the DB-backed "FrontendRuntime" config
